@@ -4,7 +4,7 @@ import {
   url2Real,
   wordCount2Str
 } from '../../method/index.js';
-import storejs from 'store/dist/store.legacy';
+import storejs from '../../method/storejs';
 
 
 export const GET_BOOK_LIST = 'GET_BOOKLIST';

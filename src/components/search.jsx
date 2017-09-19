@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import ResultBookItem from './resultBookItem';
 import styles from '../styles/search.less';
 import template from './template';
-import storejs from 'store/dist/store.legacy';
+import storejs from '../method/storejs';
 import randomcolor from 'randomcolor';
 
 const { Header, Content } = Layout

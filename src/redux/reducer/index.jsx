@@ -1,6 +1,6 @@
 import {GET_BOOK_LIST, GET_BOOK_ITEM}  from '../action/index';
 import {ADD_LIST, REMOVE_LIST, GET_LIST, REFRESH_LIST} from '../action/index';
-import storejs from 'store/dist/store.legacy';
+import storejs from '../../method/storejs';
 
 
 

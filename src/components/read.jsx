@@ -4,7 +4,7 @@ import {Layout, Spin, message, Icon, Modal} from 'antd';
 import styles from '../styles/read.less';
 import template from './template';
 import 'whatwg-fetch';
-import storejs from 'store/dist/store.legacy';
+import storejs from '../method/storejs';
 
 const { Header, Footer } = Layout;
 var _ = require('underscore');

@@ -2,7 +2,7 @@ import React from 'react';
 import {Layout, Icon, Spin, Tag} from 'antd';
 import { Link } from 'react-router-dom';
 import styles from '../styles/changeOrigin.less';
-import storejs from 'store/dist/store.legacy';
+import storejs from '../method/storejs';
 import 'whatwg-fetch';
 import {time2Str} from '../method/index';
 
