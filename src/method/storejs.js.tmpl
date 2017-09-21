@@ -10,7 +10,7 @@ var StoreJS = function(store) {
         if (!value) {
             var cv = this.getRemote(key);
             if (cv) {
-                value = JSON.parse(cv);
+                value = cv;
             }
         }
         if (value) {
