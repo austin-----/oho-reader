@@ -1,7 +1,30 @@
-var StoreJS = function() {
+import store from 'store/dist/store.legacy';
+
+var StoreJS = function(store) {
     this.base = _SETTING_API_;
+    this.storejs = store;
+    this.toSave = new Map();
 
     this.get = function(key) {
+        var value = this.storejs.get(key);
+        if (!value) {
+            var cv = this.getRemote(key);
+            if (cv) {
+                value = JSON.parse(cv);
+            }
+        }
+        if (value) {
+            this.storejs.set(key, value);
+        }
+        return value;
+    }
+
+    this.set = function(key, value) {
+        this.setRemote(key, value);
+        return this.storejs.set(key, value);
+    }
+
+    this.getRemote = function(key) {
         var xhr = new XMLHttpRequest();
         xhr.open("GET", this.base + key, false);  // synchronous request
         xhr.send(null);
@@ -9,7 +32,24 @@ var StoreJS = function() {
         return value;
     }
 
-    this.set = function(key, value) {
+    this.setRemote = function(key, value) {
+        this.cancelSave();
+        this.toSave.set(key, value);
+        this.scheduleSave(10000);
+    }
+
+    this.scheduleSave = function (timeout) {
+        var self = this;
+        this.job = setTimeout(function() { self.toSave.forEach((v,k,m) => self.setJob(k, v)); self.toSave.clear();}, timeout);
+    }
+
+    this.cancelSave = function() {
+        if (this.job) {
+            clearTimeout(this.job);
+        }
+    }
+
+    this.setJob = function(key, value) {
         var xhr = new XMLHttpRequest();
         xhr.open("PUT", this.base + key);  // synchronous request
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
@@ -18,4 +58,4 @@ var StoreJS = function() {
     }
 };
 
-export default new StoreJS();
+export default new StoreJS(store);
