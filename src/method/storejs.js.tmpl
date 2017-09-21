@@ -11,10 +11,10 @@ var StoreJS = function() {
 
     this.set = function(key, value) {
         var xhr = new XMLHttpRequest();
-        xhr.open("PUT", this.base + key, false);  // synchronous request
+        xhr.open("PUT", this.base + key);  // synchronous request
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         xhr.send(JSON.stringify(value));
-        return JSON.parse(xhr.responseText);
+        return '';
     }
 };
 
