@@ -7,7 +7,7 @@ var StoreJS = function(store) {
 
     this.get = function(key) {
         var value = this.storejs.get(key);
-        if (!value) {
+        if (!value || value == []) {
             var cv = this.getRemote(key);
             if (cv) {
                 value = cv;
