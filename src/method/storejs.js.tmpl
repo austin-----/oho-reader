@@ -4,9 +4,17 @@ var StoreJS = function(store) {
     this.base = _SETTING_API_;
     this.storejs = store;
     this.toSave = new Map();
+    this.sync = [];
 
     this.get = function(key) {
+
         var value = this.storejs.get(key);
+
+        if (this.sync.indexOf(key) == -1) {
+            value = null;
+            this.sync.push(key);
+        }
+        
         if (!value || (Array.isArray(value) && value.length == 0)) {
             var cv = this.getRemote(key);
             if (cv) {
