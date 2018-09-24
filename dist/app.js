@@ -3,8 +3,8 @@ var proxy = require('http-proxy-middleware');
 var path = require('path');
 
 var app = express();
-app.use('/static', path.join(__dirname, express.static('static')));
-app.use('/assets', path.join(__dirname, express.static('assets')));
+app.use('/static', express.static(path.join(__dirname, 'static')));
+app.use('/assets', express.static(path.join(__dirname, 'assets')));
 app.use('/api', proxy({
   target: 'http://api.zhuishushenqi.com/',
   pathRewrite: {'^/api' : '/'}, 

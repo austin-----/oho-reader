@@ -22,19 +22,27 @@ var StoreJS = function(store) {
             }
         }
         if (value) {
-            this.storejs.set(key, value);
+            this.setStore(key, value);
         }
         return value;
     }
 
     this.set = function(key, value) {
         this.setRemote(key, value);
-        return this.storejs.set(key, value);
+        return this.setStore(key, value);
+    }
+
+    this.setStore = function(key, value) {
+        try {
+            return this.storejs.set(key, value);
+        } catch {
+            return true;
+        }
     }
 
     this.getRemote = function(key) {
         var xhr = new XMLHttpRequest();
-        xhr.open("GET", this.base + key, false);  // synchronous request
+        xhr.open('GET', this.base + key, false);  // synchronous request
         xhr.send(null);
         var value = JSON.parse(xhr.responseText);
         return value;
@@ -59,7 +67,7 @@ var StoreJS = function(store) {
 
     this.setJob = function(key, value) {
         var xhr = new XMLHttpRequest();
-        xhr.open("PUT", this.base + key);  // synchronous request
+        xhr.open('PUT', this.base + key);  // synchronous request
         xhr.setRequestHeader('Content-type','application/json; charset=utf-8');
         xhr.send(JSON.stringify(value));
         return '';
