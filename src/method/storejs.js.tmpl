@@ -35,7 +35,7 @@ var StoreJS = function(store) {
     this.setStore = function(key, value) {
         try {
             return this.storejs.set(key, value);
-        } catch {
+        } catch (e) {
             return true;
         }
     }
