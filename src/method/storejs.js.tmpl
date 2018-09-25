@@ -1,43 +1,16 @@
-import store from 'store/dist/store.legacy';
-
 var StoreJS = function(store) {
     this.base = _SETTING_API_;
     this.storejs = store;
     this.toSave = new Map();
-    this.sync = [];
 
     this.get = function(key) {
 
-        var value = this.storejs.get(key);
-
-        if (this.sync.indexOf(key) == -1) {
-            value = null;
-            this.sync.push(key);
-        }
-        
-        if (!value || (Array.isArray(value) && value.length == 0)) {
-            var cv = this.getRemote(key);
-            if (cv) {
-                value = cv;
-            }
-        }
-        if (value) {
-            this.setStore(key, value);
-        }
+        var value = this.getRemote(key);
         return value;
     }
 
     this.set = function(key, value) {
         this.setRemote(key, value);
-        return this.setStore(key, value);
-    }
-
-    this.setStore = function(key, value) {
-        try {
-            return this.storejs.set(key, value);
-        } catch (e) {
-            return true;
-        }
     }
 
     this.getRemote = function(key) {

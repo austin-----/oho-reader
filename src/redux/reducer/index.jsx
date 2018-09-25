@@ -45,10 +45,10 @@ export const bookList = (state, action={}) => {
       storejs.set('bookIdList', Array.from(state.id));
       return state;
     case REMOVE_LIST:
+      state.id.delete(action.data._id);
       for (let index in state.list){
         if (state.list[index]._id === action.data._id) {
           state.list.splice(index, 1);
-          state.id.delete(action.data._id);
           break;
         }
       }
