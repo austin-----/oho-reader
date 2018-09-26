@@ -2,7 +2,6 @@ import React from 'react';
 import {Layout, Icon, Spin, Tag} from 'antd';
 import { Link } from 'react-router-dom';
 import styles from '../styles/changeOrigin.less';
-import storejs from '../method/storejs';
 import 'whatwg-fetch';
 import {time2Str} from '../method/index';
 
@@ -16,16 +15,14 @@ class ChangeOrigin extends React.Component{
       data: []
     }
     this.pos = this.props.match.params.id; //书籍在列表的序号
-    this.bookList = storejs.get('bookList')[this.pos];
-    this.currentOrigin = this.bookList.list.host;
+    this.bookList = this.props.bookList.list[this.pos];
+    this.currentOrigin = this.bookList.host;
     this.changeOrigin = (id) => {
       fetch(`/api/toc/${id}?view=chapters`)
       .then(res => res.json())
       .then(data => {
-        let bookList = storejs.get('bookList');
-        bookList[this.pos].list = data;
-        bookList[this.pos].sourceId = id;
-        storejs.set('bookList', bookList);
+        this.bookList[this.pos].list = data;
+        this.bookList[this.pos].sourceId = id;
         this.props.history.push({pathname: `/read/${this.pos}`});
       })
       .catch(error => {

@@ -4,7 +4,6 @@ import {
   url2Real,
   wordCount2Str
 } from '../../method/index.js';
-import storejs from '../../method/storejs';
 
 
 export const GET_BOOK_LIST = 'GET_BOOKLIST';
@@ -131,8 +130,8 @@ export const receiveReresh = (data) => {
 }
 
 //刷新书籍列表
-export const refreshBook = () => {
-  let localBookList =  storejs.get('bookList') || [];
+export const refreshBook = (list) => {
+  let localBookList = list;
   let bookIdArr = []
   let bookSourceIdArr = [];
   return dispatch => {

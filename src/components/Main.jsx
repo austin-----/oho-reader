@@ -17,7 +17,7 @@ class AppComponent extends React.Component {
       bookList: this.props.bookList.list,
       refresh: false
     }
-    console.log(this.props.bookList.list)
+    console.log("bookList.list: " + this.props.bookList.list);
     this.menu = (
       <Menu>
         <Menu.Item key="0">
@@ -32,7 +32,7 @@ class AppComponent extends React.Component {
   }
  
   componentWillMount() {
-    this.props.refreshBook();
+    this.props.refreshBook(this.props.bookList.list);
   }
 
   componentWillReceiveProps(nextProps){

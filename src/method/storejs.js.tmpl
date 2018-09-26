@@ -1,6 +1,5 @@
-var StoreJS = function(store) {
+var StoreJS = function() {
     this.base = _SETTING_API_;
-    this.storejs = store;
     this.toSave = new Map();
 
     this.get = function(key) {
@@ -47,4 +46,4 @@ var StoreJS = function(store) {
     }
 };
 
-export default new StoreJS(store);
+export default new StoreJS();

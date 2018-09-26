@@ -59,6 +59,7 @@ class BookIntroduce extends React.Component{
     this.setState({loading: false, save: nextProps.bookList.id.has(nextProps.fetchBookItem._id)});
     if (this.flag) {
       let list = nextProps.bookList.list
+      console.log('list: ' + JSON.stringify(list));
       for (let index in list) {
         if (list[index]._id === nextProps.fetchBookItem._id) {
           let index = nextProps.bookList.list.length - 1;

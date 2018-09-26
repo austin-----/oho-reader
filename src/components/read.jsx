@@ -14,8 +14,8 @@ class Read extends React.Component{
     super(props);
     this.flag = true; //标记第一次进入， 判断是否读取上一次阅读的scrollTop
     this.pos = this.props.match.params.id; //书籍在列表的序号
-    this.index = storejs.get('bookList')[this.pos].readIndex || 0; //章节号
-    this.chapterList = storejs.get('bookList')[this.pos].list.chapters;
+    this.index = this.props.bookList.list[this.pos].readIndex || 0; //章节号
+    this.chapterList = this.props.bookList.list[this.pos].list.chapters;
     this.readSetting = storejs.get('readSetting') || {fontSize: '18', backgroundColor: 'rgb(196, 196 ,196)'};
     this.state = {
       loading: true,
@@ -39,14 +39,14 @@ class Read extends React.Component{
 
       
       this.setState({loading: true});
-      let chapters = storejs.get('bookList')[this.pos].list.chapters;
+      let chapters = this.props.bookList.list[this.pos].list.chapters;
       if (_.has(chapters[index], 'chapter')) {
         this.setState({loading: false, chapter: chapters[index].chapter}, () => {
           this.refs.box.scrollTop = 0;
         });
-        let bookList = storejs.get('bookList');
-        bookList[this.pos].readIndex = index;
-        storejs.set('bookList', bookList);
+        let bookList = this.props.bookList.list[this.pos];
+        //bookList[this.pos].readIndex = index;
+        //TODO: update index
         return;
       }
 
@@ -61,9 +61,9 @@ class Read extends React.Component{
         let content = _.has(data.chapter, 'cpContent') ?  data.chapter.cpContent :  data.chapter.body;
         data.chapter.cpContent =  '   ' + content.replace(/\n/g, "\n   ");
 
-        let bookList = storejs.get('bookList');
-        bookList[this.pos].readIndex = index;
-        storejs.set('bookList', bookList);
+        let bookList = this.props.bookList.list[this.pos];
+        //bookList[this.pos].readIndex = index;
+        //TODO: update index
 
         this.setState({loading: false, chapter: data.chapter})
       })
@@ -112,9 +112,9 @@ class Read extends React.Component{
     }
 
     this.readScroll = () => {
-      let bookList = storejs.get('bookList');
+      let bookList = this.props.bookList.list[this.pos];
       bookList[this.pos].readScroll = this.refs.box.scrollTop;
-      storejs.set('bookList', bookList);
+      // TODO: update readScroll
     }
 
     this.showChapterList = (chapterListShow) => {
@@ -131,7 +131,7 @@ class Read extends React.Component{
           </div>
         ),
         onOk() {
-          let bookList = storejs.get('bookList');
+          let bookList = this.props.bookList.list[this.pos];
           let chapters = bookList[pos].list.chapters;
           let download = (start, end) => {
             if (start > end || start >= chapters.length) {
@@ -149,7 +149,7 @@ class Read extends React.Component{
               data.chapter.cpContent =  '   ' + content.replace(/\n/g, "\n   ");
               chapters[start].chapter = data.chapter; 
               bookList[pos].list.chapters = chapters;
-              storejs.set('bookList', bookList);
+              // TODO: update chapters? or not
               download(++start, end);
             })
             .catch(error => message.info(error))
@@ -178,16 +178,16 @@ class Read extends React.Component{
     this.getChapter(this.index);
 
     // 刷新最近阅读的书籍列表顺序
-    let bookList = storejs.get('bookList');
-    bookList.unshift(bookList.splice(this.pos, 1)[0]);
-    storejs.set('bookList', bookList);
+    let bookList = this.props.bookList.list[this.pos];
+    // bookList.unshift(bookList.splice(this.pos, 1)[0]);
+    // TODO: update bookList
     this.pos = 0;
   }
 
 
   componentDidUpdate(prevProps, prevState) {
     if (this.flag) { //加载上次阅读进度
-      let bookList = storejs.get('bookList');
+      let bookList = this.props.bookList.list[this.pos];
       this.refs.box.scrollTop = _.has(bookList[this.pos], 'readScroll') ? bookList[this.pos].readScroll : 0;
       this.flag = false;
     }

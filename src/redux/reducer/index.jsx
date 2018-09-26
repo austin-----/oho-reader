@@ -1,8 +1,5 @@
 import {GET_BOOK_LIST, GET_BOOK_ITEM}  from '../action/index';
 import {ADD_LIST, REMOVE_LIST, GET_LIST, REFRESH_LIST} from '../action/index';
-import storejs from '../../method/storejs';
-
-
 
 //搜索书籍
 export const fetchBookList = (state = {books: [], name: ''}, action={}) => {
@@ -12,7 +9,7 @@ export const fetchBookList = (state = {books: [], name: ''}, action={}) => {
         data: {books},
         name
       } = action
-      return {books, name};
+      return Object.assign({}, state, {books, name});
     default:
       return state;
   }
@@ -22,7 +19,7 @@ export const fetchBookList = (state = {books: [], name: ''}, action={}) => {
 export const fetchBookItem = (state = {}, action={}) => {
   switch(action.type){
     case GET_BOOK_ITEM:
-      return action.data;
+      return Object.assign({}, state, action.data);
     default:
       return state;
   }
@@ -30,37 +27,44 @@ export const fetchBookItem = (state = {}, action={}) => {
 
 
 //默认书单列表
-export const bookList = (state, action={}) => {
-  let localList = storejs.get('bookList') || [];
-  let localBookIdList =  storejs.get('bookIdList') || [];
-  state = {list: localList, id: new Set(localBookIdList)};
+export const bookList = (state = {list: [], id: new Set()}, action={}) => {
   switch(action.type){
     case ADD_LIST:
       if (state.id.has(action.data._id)) {
         return state;
       }
-      state.list.unshift(action.data);
-      state.id.add(action.data._id);
-      storejs.set('bookList', state.list);
-      storejs.set('bookIdList', Array.from(state.id));
-      return state;
+      var newId = new Set(state.id);
+      newId.add(action.data._id);
+      return Object.assign({}, state, {
+        list: [
+          ...state.list,
+          action.data
+        ],
+        id: newId
+      });
     case REMOVE_LIST:
-      state.id.delete(action.data._id);
-      for (let index in state.list){
-        if (state.list[index]._id === action.data._id) {
-          state.list.splice(index, 1);
+      var newId = new Set(state.id);
+      newId.delete(action.data._id);
+      var newList = state.list.slice();
+      for (let index in newList){
+        if (newList[index]._id === action.data._id) {
+          newList.splice(index, 1);
           break;
         }
       }
-      storejs.set('bookList', state.list);
-      storejs.set('bookIdList', Array.from(state.id));
-      return state;
+      return Object.assign({}, state, {
+        list: newList,
+        id: newId
+      });
     case GET_LIST:
       return state;
     case REFRESH_LIST:
-      storejs.set('bookList', action.data);
-      state = {list: action.data, id: new Set(localBookIdList)};
-      return state;
+      return Object.assign({}, state, {
+        bookList: {
+          ...state.id,
+          list: action.data
+        }
+      });
     default:
       return state;
   }
