@@ -61,7 +61,7 @@ export const bookList = (state = {list: [], id: []}, action={}) => {
     case REFRESH_LIST:
       return Object.assign({}, state, {
         list: action.data,
-        id: Array.from(...state.id)
+        id: state.id
       });
     default:
       return state;

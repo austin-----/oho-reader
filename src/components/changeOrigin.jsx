@@ -2,6 +2,7 @@ import React from 'react';
 import {Layout, Icon, Spin, Tag} from 'antd';
 import { Link } from 'react-router-dom';
 import styles from '../styles/changeOrigin.less';
+import template from './template';
 import 'whatwg-fetch';
 import {time2Str} from '../method/index';
 
@@ -14,6 +15,7 @@ class ChangeOrigin extends React.Component{
       loading: true,
       data: []
     }
+    console.log('changeOrigin: ' + JSON.stringify(this.props));
     this.pos = this.props.match.params.id; //书籍在列表的序号
     this.bookList = this.props.bookList.list[this.pos];
     this.currentOrigin = this.bookList.host;
@@ -73,4 +75,4 @@ class ChangeOrigin extends React.Component{
   }
 }
 
-export default ChangeOrigin;
+export default template(ChangeOrigin);
