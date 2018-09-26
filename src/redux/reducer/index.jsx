@@ -27,20 +27,20 @@ export const fetchBookItem = (state = {}, action={}) => {
 
 
 //默认书单列表
-export const bookList = (state = {list: [], id: new Set()}, action={}) => {
+export const bookList = (state = {list: [], id: []}, action={}) => {
   switch(action.type){
     case ADD_LIST:
-      if (state.id.has(action.data._id)) {
+      var newId = new Set(state.id);
+      if (newId.has(action.data._id)) {
         return state;
       }
-      var newId = new Set(state.id);
       newId.add(action.data._id);
       return Object.assign({}, state, {
         list: [
           ...state.list,
           action.data
         ],
-        id: newId
+        id: Array.from(newId)
       });
     case REMOVE_LIST:
       var newId = new Set(state.id);
@@ -54,16 +54,14 @@ export const bookList = (state = {list: [], id: new Set()}, action={}) => {
       }
       return Object.assign({}, state, {
         list: newList,
-        id: newId
+        id: Array.from(newId)
       });
     case GET_LIST:
       return state;
     case REFRESH_LIST:
       return Object.assign({}, state, {
-        bookList: {
-          ...state.id,
-          list: action.data
-        }
+        list: action.data,
+        id: Array.from(...state.id)
       });
     default:
       return state;

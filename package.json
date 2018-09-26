@@ -84,6 +84,7 @@
     "react-tappable": "^0.8.4",
     "redux": "^3.6.0",
     "redux-thunk": "^2.2.0",
+    "redux-persist": "^5.10.0",
     "store": "^2.0.4",
     "store.js": "^1.0.4",
     "underscore": "^1.8.3",

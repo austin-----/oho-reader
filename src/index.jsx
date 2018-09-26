@@ -3,7 +3,8 @@ import React from 'react';
 import {render} from 'react-dom';
 import Route from './router/route';
 import {Provider} from 'react-redux';
-import store from './redux/store/store';
+import {PersistGate} from 'redux-persist/integration/react'
+import {store,persistor} from './redux/store/store';
 
 import 'normalize.css';
 import 'animate.css';
@@ -20,6 +21,8 @@ store.subscribe(() => { //监听state变化
 // Render the main component into the dom
 render(
   <Provider store={store}>
-    <Route />
+    <PersistGate loading={null} persistor={persistor}>
+      <Route />
+    </PersistGate>
   </Provider>
   , app)
