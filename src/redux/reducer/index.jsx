@@ -1,10 +1,12 @@
-import {GET_BOOK_LIST, GET_BOOK_ITEM}  from '../action/index';
-import {ADD_LIST, REMOVE_LIST, GET_LIST, REFRESH_LIST} from '../action/index';
+import {SET_SEARCH_RESULT, CACHE_BOOK_DETAILS}  from '../action/index';
+import {ADD_TO_BOOKLIST, REMOVE_FROM_BOOKLIST, SET_BOOKLIST} from '../action/index';
+import {SET_BOOK_SOURCE, SET_BOOK_PROGRESS} from '../action/index';
+import {SET_BOOK_DETAILS, SET_BOOK_CHAPTERS} from '../action/index';
 
 //搜索书籍
-export const fetchBookList = (state = {books: [], name: ''}, action={}) => {
+export const searchResults = (state = {books: [], name: ''}, action={}) => {
   switch (action.type){
-    case GET_BOOK_LIST:
+    case SET_SEARCH_RESULT:
       let {
         data: {books},
         name
@@ -16,55 +18,64 @@ export const fetchBookList = (state = {books: [], name: ''}, action={}) => {
 }
 
 //书籍详情
-export const fetchBookItem = (state = {}, action={}) => {
+export const searchResultDetails = (state = {}, action={}) => {
   switch(action.type){
-    case GET_BOOK_ITEM:
+    case CACHE_BOOK_DETAILS:
       return Object.assign({}, state, action.data);
     default:
       return state;
   }
 }
 
-
 //默认书单列表
-export const bookList = (state = {list: [], id: []}, action={}) => {
+export const bookList = (state = [], action={}) => {
   switch(action.type){
-    case ADD_LIST:
-      var newId = new Set(state.id);
-      if (newId.has(action.data._id)) {
+    case ADD_TO_BOOKLIST:
+      var set = new Set(state);
+      if (set.has(action.data._id)) {
         return state;
       }
-      newId.add(action.data._id);
-      return Object.assign({}, state, {
-        list: [
-          ...state.list,
-          action.data
-        ],
-        id: Array.from(newId)
-      });
-    case REMOVE_LIST:
-      var newId = new Set(state.id);
-      newId.delete(action.data._id);
-      var newList = state.list.slice();
-      for (let index in newList){
-        if (newList[index]._id === action.data._id) {
-          newList.splice(index, 1);
-          break;
-        }
-      }
-      return Object.assign({}, state, {
-        list: newList,
-        id: Array.from(newId)
-      });
-    case GET_LIST:
+      set.add(action.data._id);
+      return Array.from(set);
+    case REMOVE_FROM_BOOKLIST:
+      var set = new Set(state);
+      set.delete(action.data._id);
+      return Array.from(set);
+    case SET_BOOKLIST:
       return state;
-    case REFRESH_LIST:
+    default:
+      return state;
+  }
+}
+
+export const readingState = (state = {}, action={}) => {
+  var book = state[action.bookId] || {};
+  switch(action.type) {
+    case SET_BOOK_PROGRESS:
       return Object.assign({}, state, {
-        list: action.data,
-        id: state.id
+        [action.bookId]: Object.assign({}, book, {readIndex: action.readIndex})
+      });
+    case SET_BOOK_SOURCE:
+      return Object.assign({}, state, {
+        [action.bookId]: Object.assign({}, book, {sourceId: action.sourceId})
       });
     default:
       return state;
   }
 }
 
+export const bookData = (state = {}, action = {}) => {
+  var book = state[action.bookId] || {};
+  switch(action.type) {
+    case SET_BOOK_DETAILS:
+    return Object.assign({}, state, {
+      [action.bookId]: Object.assign({}, book, {details: action.details})
+    });
+    case SET_BOOK_CHAPTERS:
+    return Object.assign({}, state, {
+      [action.bookId]: Object.assign({}, book, {chapterInfo: action.chapters})
+    });
+    default:
+      return state;
+  }
+}

@@ -1,177 +1,151 @@
-import  'whatwg-fetch';
-import {
-  time2Str,
-  url2Real,
-  wordCount2Str
-} from '../../method/index.js';
+import * as bookApi from '../../method/bookApi';
 
+export const SET_SEARCH_RESULT = 'SET_SEARCH_RESULT';
+export const CACHE_BOOK_DETAILS = 'CACHE_BOOK_DETAILS';
 
-export const GET_BOOK_LIST = 'GET_BOOKLIST';
-export const GET_BOOK_ITEM = 'GET_BOOKITEM';
-export const ADD_LIST = 'ADD_LIST';
-export const REMOVE_LIST = 'REMOVE_LIST';
-export const REFRESH_LIST = ' REFRESH_LIST';
-export const GET_LIST = 'GET_LIST';
+export const ADD_TO_BOOKLIST = 'ADD_TO_BOOKLIST';
+export const REMOVE_FROM_BOOKLIST = 'REMOVE_FROM_BOOKLIST';
+
+export const SET_BOOK_SOURCE = 'SET_BOOK_SOURCE';
+export const SET_BOOK_PROGRESS = 'SET_BOOK_PROGRESS';
+
+export const SET_BOOK_DETAILS = 'SET_BOOK_DETAILS';
+export const SET_BOOK_CHAPTERS = 'SET_BOOK_CHAPTERS';
+
+export const REFRESH_BOOKLIST = 'REFRESH_BOOKLIST';
+
 // export const GET_BOOK_SOURCE = 'GET_BOOK_SOURCE';
 // export const GET_CHAPTER_CONTENT = 'GET_CHAPTER_CONTENT';
 // export const GET_CHAPTER_LIST = 'GET_CHAPTER_LIST';
 
-export const receiveBookList = (data, name) => {
+export const setSearchResult = (data, name) => {
   return {
-    type: GET_BOOK_LIST,
+    type: SET_SEARCH_RESULT,
     data,
     name
   }
 }
 
-//搜索书籍
-export const getBookList = (name) => {
-  return  dispatch => {
-    fetch(`/api/book/fuzzy-search?query=${name}&start=0`)
-      .then(res => res.json())
-      .then(data => {
-        data.books.map((item) => { item.cover = url2Real(item.cover)})
-        return data;
-      })
-      .then(data => dispatch(receiveBookList(data, name)))
+// Search for books
+export const searchBook = (name) => {
+  return dispatch => {
+    bookApi.searchBook(name)
+      .then(books => dispatch(setSearchResult(books, name)))
       .catch(error => {
         console.log(error);
-      })
+      });
   }
 }
 
-
-export const receiveBookItem = (data) => {
+export const cacheBookDetails = (data) => {
   return {
-    type: GET_BOOK_ITEM,
+    type: CACHE_BOOK_DETAILS,
     data
   }
 }
 
-//获取书籍详情
-export const getBookItem = (id) => {
+// Retrieve book details
+export const retrieveBookDetails = (id) => {
   return dispatch => {
-    fetch(`/api/book/${id}`)
-      .then(res => res.json())
-      .then(data => {
-        data.cover = url2Real(data.cover);
-        data.wordCount = wordCount2Str(data.wordCount);
-        data.updated = time2Str(data.updated);
-        return data;
-      })
-      .then(data => dispatch(receiveBookItem(data)))
+    bookApi.getBookDetails(id)
+      .then(data => dispatch(cacheBookDetails(data)))
       .catch(error => {
         console.log(error);
-      })
+      });
   }
 }
 
-
-
-//删除书籍
+// remove a book from book list
 export const deleteBook = (data) => {
   return {
-    type: REMOVE_LIST,
+    type: REMOVE_FROM_BOOKLIST,
     data
   }
 }
 
-//为书籍请求章节列表 - 书源信息
+export const addToBookList = (data) => {
+  return {
+    type: ADD_TO_BOOKLIST,
+    data
+  }
+}
+
+export const setBookSource = (bookId, sourceId) => {
+  return {
+    type: SET_BOOK_SOURCE,
+    bookId,
+    sourceId
+  }
+}
+
+export const setBookProgress = (bookId, readIndex) => {
+  return {
+    type: SET_BOOK_PROGRESS,
+    bookId,
+    readIndex
+  }
+}
+
+export const setBookDetails = (book) => {
+  return {
+    type: SET_BOOK_DETAILS,
+    bookId: book._id,
+    details: book
+  }
+}
+
+export const setBookChapters = (bookId, chapters) => {
+  return {
+    type: SET_BOOK_CHAPTERS,
+    bookId,
+    chapters
+  }
+}
+
+// add a book to book list
 export const addBook = (data) => {
-  let dataIntroduce = data;
-  return dispatch =>{
-    fetch(`/api/toc?view=summary&book=${data._id}`)
-      .then(res => res.json())
-      .then(data => {
-        let sourceId = data.length > 1 ? data[1]._id : data[0]._id; 
-        for (let item of data) {
-          if (item.source === 'my176') {
-            sourceId = item._id;
-          }
-        }
-        dataIntroduce.sourceId = sourceId;
-        return fetch(`/api/toc/${sourceId}?view=chapters`);
-      })
-      .then(res => res.json())
-      .then(data => {
-        data.readIndex = 0
-        dataIntroduce.list = data;
-        return dispatch(addBookInfo(dataIntroduce))
-      })
-      .catch(error => {
-        console.log(error);
-      })
-  }
-}
- 
-// 添加书籍
-export const addBookInfo = (data) => {
-  return {
-    type: ADD_LIST,
-    data
-  }
-}
-
-
-//获取书籍
-export const getBook = () => {
-  return {
-    type: GET_LIST
-  }
-}
-
-
-//刷新书籍列表
-export const receiveReresh = (data) => {
-  return {
-    type :REFRESH_LIST,
-    data
-  }
-}
-
-//刷新书籍列表
-export const refreshBook = (list) => {
-  let localBookList = list;
-  let bookIdArr = []
-  let bookSourceIdArr = [];
+  let book = data;
   return dispatch => {
-    for(let item of localBookList) {
-      bookIdArr.push(item._id);
-      bookSourceIdArr.push(item.sourceId);
-    }
+    var bookId = book._id;
 
-    let introduce = bookIdArr.map((item, index) => {
-      return fetch(`/api/book/${item}`)
-      .then(res => res.json())
-      .then(data => {
-        data.cover = url2Real(data.cover);
-        data.wordCount = wordCount2Str(data.wordCount);
-        data.updated = time2Str(data.updated);
-        return data;
-      })
-      .then(data => {
-        for (let indexName in data) {
-          localBookList[index][indexName] = data[indexName]
-        }
+    bookApi.getBookSourceId(bookId)
+      .then(sourceId => {
+        dispatch(addToBookList(book));
+        dispatch(setBookProgress(bookId, 0));
+        dispatch(setBookSource(bookId, sourceId));
+        dispatch(setBookDetails(book));
+
+        bookApi.getBookChapters(sourceId)
+          .then(chapters => {
+            dispatch(setBookChapters(bookId, chapters));
+          });
       })
       .catch(error => {
         console.log(error);
-      })
-    });
+      });
+  }
+}
 
-    let list = bookSourceIdArr.map((item, index) => {
-      return fetch(`/api/toc/${item}?view=chapters`)
-      .then(res => res.json())
-      .then(data => {
-        localBookList[index].list = data;
-      })
-      .catch(error => {
-        console.log(error);
-      })
-    });
+export const changeSource = (bookId, sourceId) => {
+  return dispatch => {
+    dispatch(setBookSource(bookId, sourceId));
 
-    Promise.all([...introduce, ...list]).then((posts) => {
-      dispatch(receiveReresh(localBookList));
+    bookApi.getBookChapters(sourceId)
+    .then(data => {
+      // set chapters and sourceId
+      dispatch(setBookChapters(bookId, data));
     })
+    .catch(error => {
+      console.log(error);
+    })
+  }
+}
+
+// refresh books in book list
+export const refreshBooks = (list, readingState) => {
+  return {
+    type: REFRESH_BOOKLIST,
+    list,
+    readingState
   }
 }

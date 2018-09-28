@@ -4,14 +4,18 @@ import * as action from '../redux/action/index'
 const Main = (component) => {
   const mapStateToProps = (state) => {
     let {
-      fetchBookList,
-      fetchBookItem,
-      bookList
+      searchResults,
+      searchResultDetails,
+      bookList,
+      readingState,
+      bookData
     } = state
     return {
-      fetchBookList,
-      fetchBookItem,
-      bookList
+      searchResults,
+      searchResultDetails,
+      bookList,
+      readingState,
+      bookData
     }
   }
 

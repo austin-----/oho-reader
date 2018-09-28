@@ -5,6 +5,7 @@ import styles from '../styles/changeOrigin.less';
 import template from './template';
 import 'whatwg-fetch';
 import {time2Str} from '../method/index';
+import * as bookApi from '../method/bookApi';
 
 const { Header, Content } = Layout;
 
@@ -15,35 +16,27 @@ class ChangeOrigin extends React.Component{
       loading: true,
       data: []
     }
+
     console.log('changeOrigin: ' + JSON.stringify(this.props));
     this.pos = this.props.match.params.id; //书籍在列表的序号
-    this.bookList = this.props.bookList.list[this.pos];
-    this.currentOrigin = this.bookList.host;
+    this.bookId = this.props.bookList[this.pos];
+    this.bookDetails = this.props.bookData[bookId].details;
+    this.currentOrigin = this.bookDetails.host;
+
     this.changeOrigin = (id) => {
-      fetch(`/api/toc/${id}?view=chapters`)
-      .then(res => res.json())
-      .then(data => {
-        this.bookList[this.pos].list = data;
-        this.bookList[this.pos].sourceId = id;
-        this.props.history.push({pathname: `/read/${this.pos}`});
-      })
-      .catch(error => {
-        console.log(error);
-      })
+      this.props.changeSource(this.bookId, id);
+      this.props.history.push({pathname: `/read/${this.pos}`});
     }
   }
 
   componentWillMount() {
-    fetch(`/api/toc?view=summary&book=${this.bookList._id}`)
-        .then(res => res.json())
+    bookApi.getBookSources(this.bookDetails_id)
         .then( data => {
           console.log(data)
           this.setState({loading: false, data});
         })
         .catch( error => console.log(error));
   }
-
-  
 
   render() {
     return (

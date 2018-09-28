@@ -14,10 +14,10 @@ class AppComponent extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      bookList: this.props.bookList.list,
+      bookList: this.props.bookList,
+      bookData: this.props.bookData,
       refresh: false
     }
-    console.log("bookList.list: " + this.props.bookList.list);
     this.menu = (
       <Menu>
         <Menu.Item key="0">
@@ -28,17 +28,16 @@ class AppComponent extends React.Component {
         </Menu.Item>
       </Menu>
     )
-
   }
  
   componentWillMount() {
-    this.props.refreshBook(this.props.bookList.list);
+    this.setState({refresh: true});
+    this.props.refreshBooks(this.props.bookList, this.props.readingState);
   }
 
   componentWillReceiveProps(nextProps){
-    this.setState({bookList: nextProps.bookList.list, refresh: false})
+    this.setState({bookList: nextProps.bookList, bookData: nextProps.bookData, refresh: false})
   }
-
   
   render() {
     return (
@@ -64,7 +63,7 @@ class AppComponent extends React.Component {
                   书架空空的！快去添加点书吧！
                 </div>
               )
-              : this.state.bookList.map((item, index) => <Link to={`/read/${index}`} key={index}><BookItem data={item} deleteBook={this.props.deleteBook} key={index} /></Link>)
+              : this.state.bookList.map((item, index) => <Link to={`/read/${index}`} key={index}><BookItem bookId={item} bookData={this.state.bookData} deleteBook={this.props.deleteBook} key={index} /></Link>)
             }
           </Content>
         </Layout>

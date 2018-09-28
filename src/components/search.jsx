@@ -14,8 +14,8 @@ class Search extends React.Component{
     super(props)
     
     this.state = {
-      searchValue: this.props.fetchBookList.name,
-      bookList: this.props.fetchBookList.books,
+      searchValue: this.props.searchResults.name,
+      bookList: this.props.searchResults.books,
       loading: false,
       searchHistory: storejs.get('searchHistory') || []
     };
@@ -47,7 +47,7 @@ class Search extends React.Component{
       this.tagColorArr.push(randomcolor({luminosity: 'dark'}));
       
       this.setState({loading: true, searchHistory});
-      this.props.getBookList(value);
+      this.props.searchBook(value);
     }
 
     this.clearInput = () => {
@@ -67,7 +67,7 @@ class Search extends React.Component{
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({bookList: nextProps.fetchBookList.books, searchValue: nextProps.fetchBookList.name, loading: false});
+    this.setState({bookList: nextProps.searchResults.books, searchValue: nextProps.searchResults.name, loading: false});
   }
 
   render() {
