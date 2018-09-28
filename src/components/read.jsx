@@ -132,6 +132,7 @@ class Read extends React.Component{
           </div>
         ),
         onOk() {
+          // TODO: add chapter cache to redux
           let bookList = this.props.bookList[this.pos];
           let chapters = bookList[pos].list.chapters;
           let download = (start, end) => {

@@ -20,7 +20,7 @@ class ChangeOrigin extends React.Component{
     console.log('changeOrigin: ' + JSON.stringify(this.props));
     this.pos = this.props.match.params.id; //书籍在列表的序号
     this.bookId = this.props.bookList[this.pos];
-    this.bookDetails = this.props.bookData[bookId].details;
+    this.bookDetails = this.props.bookData[this.bookId].details;
     this.currentOrigin = this.bookDetails.host;
 
     this.changeOrigin = (id) => {
@@ -30,7 +30,7 @@ class ChangeOrigin extends React.Component{
   }
 
   componentWillMount() {
-    bookApi.getBookSources(this.bookDetails_id)
+    bookApi.getBookSources(this.bookDetails._id)
         .then( data => {
           console.log(data)
           this.setState({loading: false, data});
