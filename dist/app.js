@@ -25,12 +25,12 @@ app.use('/setting', proxy({
   changeOrigin: true
 }));
 
-app.get('/*', function (req, res) {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
 app.get('/favicon.ico', function (req, res) {
   res.sendFile(path.join(__dirname, 'favicon.ico'));
+});
+
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.listen(3001);
