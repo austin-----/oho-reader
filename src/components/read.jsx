@@ -68,10 +68,7 @@ class Read extends React.Component {
           let content = _.has(data.chapter, 'cpContent') ? data.chapter.cpContent : data.chapter.body;
           data.chapter.cpContent = '   ' + content.replace(/\n/g, '\n   ');
 
-          //let bookList = this.props.bookList[this.pos];
-          //bookList[this.pos].readIndex = index;
-          //TODO: update index
-
+          this.props.setBookProgress(this.bookId, index);
           this.setState({ loading: false, chapter: data.chapter })
         })
         .catch(error => message.info(error))

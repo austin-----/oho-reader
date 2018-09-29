@@ -2,7 +2,7 @@ import {createStore, combineReducers, applyMiddleware} from 'redux';
 import * as reducer from '../reducer/index';
 import thunk from 'redux-thunk';
 import { persistStore, persistReducer } from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+import StoreJs from '../../method/storejs'
 import createSagaMiddleware from 'redux-saga';
 import {sagas} from '../saga/index';
 
@@ -22,8 +22,8 @@ const initialState = {
 
 const persistConfig = {
   key: 'root',
-  storage,
-  whitelist: ['bookList', 'readingState', 'searchHistory', 'readSetting']
+  storage: StoreJs,
+  whitelist: ['bookList', 'readingState', 'bookData', 'searchHistory', 'readSetting']
 }
  
 const persistedReducer = persistReducer(persistConfig, combineReducers(reducer));
@@ -33,7 +33,6 @@ const sagaMiddleware = createSagaMiddleware();
 //创建一个 Redux store 来以存放应用中所有的 state，应用中应有且仅有一个 store。
 const  store = createStore(
   persistedReducer,
-  initialState,
   applyMiddleware(thunk, sagaMiddleware)
 );
 

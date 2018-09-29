@@ -38,6 +38,11 @@ module.exports = {
         target: 'http://chapter2.zhuishushenqi.com/',
         pathRewrite: {'^/chapter' : '/chapter'},
         changeOrigin: true
+      },
+      '/setting': {
+        target: process.env.SETTING_URL,
+        pathRewrite: {'^/setting' : '/setting'},
+        changeOrigin: true
       }
    }
   },

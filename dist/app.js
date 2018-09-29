@@ -19,6 +19,12 @@ app.use('/chapter', proxy({
 }
 ));
 
+app.use('/setting', proxy({
+  target: process.env.SETTING_URL,
+  pathRewrite: {'^/setting' : '/setting'},
+  changeOrigin: true
+}));
+
 app.get('/', function (req, res) {
   res.sendFile(path.join(__dirname, 'index.html'));
 });

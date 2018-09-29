@@ -33,4 +33,3 @@ bower_components/
 .idea
 
 npm-debug.log
-src/method/storejs.js
