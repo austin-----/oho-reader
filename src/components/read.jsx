@@ -68,6 +68,10 @@ class Read extends React.Component {
           let content = _.has(data.chapter, 'cpContent') ? data.chapter.cpContent : data.chapter.body;
           data.chapter.cpContent = '   ' + content.replace(/\n/g, '\n   ');
 
+          if (this.chapterList[index].title.length > data.chapter.title.length) {
+            data.chapter.title = this.chapterList[index].title;
+          }
+
           this.props.setBookProgress(this.bookId, index);
           this.setState({ loading: false, chapter: data.chapter })
         })
