@@ -63,7 +63,7 @@ class AppComponent extends React.Component {
                   书架空空的！快去添加点书吧！
                 </div>
               )
-              : this.state.bookList.map((item, index) => <Link to={`/read/${index}`} key={index}><BookItem bookId={item} bookData={this.state.bookData} deleteBook={this.props.deleteBook} key={index} /></Link>)
+              : this.state.bookList.map((item, index) => <Link to={`/read/${item}`} key={index}><BookItem bookId={item} bookData={this.state.bookData} deleteBook={this.props.deleteBook} key={index} /></Link>)
             }
           </Content>
         </Layout>

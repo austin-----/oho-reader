@@ -4,7 +4,13 @@ import * as bookApi from '../../method/bookApi';
 import * as actions from '../action/index';
 
 export function* sagas() {
+    yield takeLatest(actions.REFRESH_BOOK, refreshBook);
     yield takeLatest(actions.REFRESH_BOOKLIST, refreshBooks);
+}
+
+function* refreshBook(action) {
+    let bookId = action.bookId;
+    yield refreshBooks({list: [bookId], readingState: []});
 }
 
 function* refreshBooks(action) {
@@ -33,7 +39,7 @@ function* refreshBooks(action) {
             bookSourceIdArr.push(sourceId);
         }
 
-        let details = bookIdArr.map(function* (item, index) {
+        let details = bookIdArr.map(function* (item) {
             var data = yield call(bookApi.getBookDetails, item);
             yield put(actions.setBookDetails(data));
         });

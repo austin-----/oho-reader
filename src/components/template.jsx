@@ -6,6 +6,8 @@ const Main = (component) => {
     let {
       searchResults,
       searchResultDetails,
+      searchHistory,
+      readSetting,
       bookList,
       readingState,
       bookData
@@ -13,6 +15,8 @@ const Main = (component) => {
     return {
       searchResults,
       searchResultDetails,
+      searchHistory,
+      readSetting,
       bookList,
       readingState,
       bookData

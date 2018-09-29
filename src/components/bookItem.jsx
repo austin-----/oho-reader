@@ -20,7 +20,7 @@ class BookItem extends React.Component {
         onOk: () => {
           this.props.deleteBook(this.state.bookId);
         },
-        onCancel() { },
+        onCancel() { }
       });
     }
   }

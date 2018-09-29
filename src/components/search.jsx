@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import ResultBookItem from './resultBookItem';
 import styles from '../styles/search.less';
 import template from './template';
-import storejs from '../method/storejs';
 import randomcolor from 'randomcolor';
 
 const { Header, Content } = Layout
@@ -12,46 +11,44 @@ const { Header, Content } = Layout
 class Search extends React.Component{
   constructor(props) {
     super(props)
-    
+
     this.state = {
       searchValue: this.props.searchResults.name,
       bookList: this.props.searchResults.books,
       loading: false,
-      searchHistory: storejs.get('searchHistory') || []
+      searchHistory: this.props.searchHistory
     };
-    this.flag = this.state.searchValue.length ? false : true; 
+
+    this.flag = this.state.searchValue.length ? false : true;
 
     this.tagColorArr = this.state.searchHistory.map(item => randomcolor({luminosity: 'dark'}));
     this.clearHistory = () => {
       let searchHistory = [];
       this.setState({searchHistory});
-      storejs.set('searchHistory', searchHistory);
+      this.props.clearSearchHistory();
     }
 
     this.searchBook = (value) => {
-      this.flag = false;
       value = value === undefined ? this.state.searchValue : value;
       if (new Set(value).has(' ') || value === '') {
         alert('宝贝儿！别输入空格或者空哦！');
         return;
       };
+      this.flag = false;
       //更新搜索历史
       let searchHistory = new Set(this.state.searchHistory);
       if (!searchHistory.has(value)) {
-        searchHistory = this.state.searchHistory;
-        searchHistory.unshift(value);
-        storejs.set('searchHistory', searchHistory);
+        this.props.addSearchHistory(value);
       }
-      
 
       this.tagColorArr.push(randomcolor({luminosity: 'dark'}));
       
-      this.setState({loading: true, searchHistory});
+      this.setState({loading: true, searchHistory: Array.from(searchHistory)});
       this.props.searchBook(value);
     }
 
     this.clearInput = () => {
-      this.flag = true;
+      this.flag = true
       this.setState({searchValue:''});
     }
 
@@ -62,12 +59,18 @@ class Search extends React.Component{
     }
 
     this.handleChange = (e) => {
-      this.setState({searchValue:e.target.value});
+      var value = e.target.value;
+      this.setState({searchValue:value});
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({bookList: nextProps.searchResults.books, searchValue: nextProps.searchResults.name, loading: false});
+    this.setState({
+      bookList: nextProps.searchResults.books, 
+      searchHistory: nextProps.searchHistory, 
+      searchValue: nextProps.searchResults.name, 
+      loading: false
+    });
   }
 
   render() {

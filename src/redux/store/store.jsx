@@ -13,6 +13,8 @@ const initialState = {
     name: ''
   },
   searchResultDetails: {},
+  searchHistory: [],
+  readSetting: {},
   bookList: [],
   readingState: {},
   bookData: {}
@@ -21,7 +23,7 @@ const initialState = {
 const persistConfig = {
   key: 'root',
   storage,
-  whitelist: ['bookList', 'readingState', 'bookData']
+  whitelist: ['bookList', 'readingState', 'searchHistory', 'readSetting']
 }
  
 const persistedReducer = persistReducer(persistConfig, combineReducers(reducer));

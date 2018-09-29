@@ -54,21 +54,13 @@ class BookIntroduce extends React.Component{
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log('Props: ' + JSON.stringify(nextProps.bookList));
     this.data = nextProps.searchResultDetails;
     this.share = `我在哦豁阅读器看《${this.data.title}》，绿色无广告，你也一起来呗！地址是${window.location.href}，移动端请手动复制这条信息。`;
-    this.setState({loading: false, save: new Set(nextProps.bookList.id).has(nextProps.searchResultDetails._id)});
+    this.setState({loading: false, save: new Set(nextProps.bookList).has(nextProps.searchResultDetails._id)});
     if (this.flag) {
-      let list = nextProps.bookList;
-      console.log('list: ' + JSON.stringify(list));
-      for (let index in list) {
-        if (list[index]._id === nextProps.searchResultDetails._id) {
-          let index = nextProps.bookList.length - 1;
-          this.props.history.push({pathname: '/read/' + index});
-          this.flag = false;
-          break;
-        }
-      }
+      const bookId = nextProps.searchResultDetails._id;
+      this.props.history.push({pathname: '/read/' + bookId});
+      this.flag = false;
     }
   }
 
