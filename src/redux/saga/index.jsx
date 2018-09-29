@@ -26,8 +26,7 @@ function* refreshBooks(action) {
             var sourceId;
             var bookState = action.readingState[bookId];
 
-            if (bookState == null || bookState.sourcdId == null) {
-
+            if (bookState == null || bookState.sourceId == null) {
                 sourceId = yield call(bookApi.getBookSourceId, bookId);
                 yield put(actions.setBookSource(bookId, sourceId));
                 yield put(actions.setBookProgress(bookId, 0));
