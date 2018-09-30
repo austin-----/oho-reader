@@ -80,6 +80,10 @@ class Read extends React.Component {
 
           this.props.setBookProgress(this.bookId, index);
           this.setState({ loading: false, chapter: data.chapter })
+
+          this.props.cacheChapterContent(this.bookId, {[index]: data.chapter});
+          const cacheStart = this.index - 10 > 1 ? this.index - 10 : 1;
+          this.props.removeChapterContent(this.bookId, Array.from({ length: cacheStart - 1 }, (_, k) => k));
         })
         .catch(error => message.info(error))
     }
@@ -266,7 +270,11 @@ class Read extends React.Component {
               return (
                 <Header className={styles.header}>
                   <Link to='' onClick={(e) => { e.preventDefault(); this.props.history.goBack();}}><Icon type='arrow-left' className={styles.pre} /></Link>
-                  <Link to={`/changeOrigin/${this.pos}`}><span className={styles.origin}>换源</span></Link>
+                  <span className={styles.origin}>
+                    <Link to={`/changeOrigin/${this.bookId}`}>换源</Link>
+                    <Link to='' onClick={(e) => { e.preventDefault(); this.nextChapter(e);}}>下一章</Link>
+                    <Link to='' onClick={(e) => { e.preventDefault(); this.preChapter(e);}}>上一章</Link>
+                  </span>
                 </Header>
               )
             })() : ''

@@ -17,20 +17,17 @@ class ChangeOrigin extends React.Component{
       data: []
     }
 
-    console.log('changeOrigin: ' + JSON.stringify(this.props));
-    this.pos = this.props.match.params.id; //书籍在列表的序号
-    this.bookId = this.props.bookList[this.pos];
-    this.bookDetails = this.props.bookData[this.bookId].details;
-    this.currentOrigin = this.bookDetails.host;
+    this.bookId = this.props.match.params.id; //书籍在列表的序号
+    this.sourceId = (this.props.readingState[this.bookId] || {}).sourceId;
 
     this.changeOrigin = (id) => {
       this.props.changeSource(this.bookId, id);
-      this.props.history.push({pathname: `/read/${this.pos}`});
+      this.props.history.goBack();
     }
   }
 
   componentWillMount() {
-    bookApi.getBookSources(this.bookDetails._id)
+    bookApi.getBookSources(this.bookId)
         .then( data => {
           console.log(data)
           this.setState({loading: false, data});
@@ -52,7 +49,7 @@ class ChangeOrigin extends React.Component{
                 this.state.data.map((item, index) => {
                     return  (
                       <li key={index} onClick={() => this.changeOrigin(item._id)}>
-                        <h1>{item.name}{this.currentOrigin === item.host ? (<Tag  className={styles.originTag} color="#f50">当前书源</Tag>) : ''}</h1>
+                        <h1>{item.name}{this.sourceId === item._id ? (<Tag  className={styles.originTag} color="#f50">当前书源</Tag>) : ''}</h1>
                         <p>{time2Str(item.updated)}前:{item.lastChapter}</p>
                       </li>
                       )
