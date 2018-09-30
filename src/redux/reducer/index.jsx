@@ -1,9 +1,10 @@
 import { SET_SEARCH_RESULT, CACHE_BOOK_DETAILS } from '../action/index';
 import { ADD_TO_BOOKLIST, REMOVE_FROM_BOOKLIST, SET_BOOKLIST } from '../action/index';
-import { SET_BOOK_SOURCE, SET_BOOK_PROGRESS, REMOVE_BOOK_READING } from '../action/index';
+import { SET_BOOK_SOURCE, SET_BOOK_PROGRESS, SET_BOOK_READSCROLL, REMOVE_BOOK_READING } from '../action/index';
 import { SET_BOOK_DETAILS, SET_BOOK_CHAPTERS, REMOVE_BOOK_DATA } from '../action/index';
 import { ADD_TO_SEARCH_HISTORY, CLEAR_SEARCH_HISTORY } from '../action/index';
 import { SET_READ_SETTING } from '../action/index';
+import { CACHE_CHAPTER_CONTENT, REMOVE_CHAPTER_CONTENT, CLEAR_CHAPTER_CONTENT } from '../action/index';
 
 //搜索书籍
 export const searchResults = (state = { books: [], name: '' }, action = {}) => {
@@ -73,6 +74,7 @@ export const bookList = (state = [], action = {}) => {
   }
 }
 
+// 阅读进度
 export const readingState = (state = {}, action = {}) => {
   var book = state[action.bookId] || {};
   switch (action.type) {
@@ -84,6 +86,10 @@ export const readingState = (state = {}, action = {}) => {
       return Object.assign({}, state, {
         [action.bookId]: Object.assign({}, book, { sourceId: action.sourceId })
       });
+    case SET_BOOK_READSCROLL:
+      return Object.assign({}, state, {
+        [action.bookId]: Object.assign({}, book, { readScroll: action.readScroll })
+      });
     case REMOVE_BOOK_READING:
       const { [action.bookId]: _, ...newState } = state;
       return newState;
@@ -92,6 +98,7 @@ export const readingState = (state = {}, action = {}) => {
   }
 }
 
+// 书籍章节
 export const bookData = (state = {}, action = {}) => {
   var book = state[action.bookId] || {};
   switch (action.type) {
@@ -105,6 +112,30 @@ export const bookData = (state = {}, action = {}) => {
       });
     case REMOVE_BOOK_DATA:
       const { [action.bookId]: _, ...newState} = state;
+      return newState;
+    default:
+      return state;
+  }
+}
+
+// 缓存章节
+export const chapterContent = (state = {}, action = {}) => {
+  const chapters = state[action.bookId] || {};
+  switch (action.type) {
+    case CACHE_CHAPTER_CONTENT:
+      return Object.assign({}, state, {
+        [action.bookId]: Object.assign({}, chapters, action.chapterContents)
+      });
+    case REMOVE_CHAPTER_CONTENT:
+      var c = Object.assign({}, chapters);
+      action.chapterIds.forEach(i => {
+        delete c[i];
+      });
+      return Object.assign({}, state, {
+        [action.bookId]: Object.assign({}, c)
+      });
+    case CLEAR_CHAPTER_CONTENT:
+      const { [action.bookId]: _, ...newState } = state;
       return newState;
     default:
       return state;

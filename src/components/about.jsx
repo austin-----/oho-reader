@@ -14,7 +14,7 @@ class Read extends React.Component{
       <div>
         <Layout >
           <Header className={styles.header}>
-            <Link to="/"><Icon type="arrow-left" className={styles.pre}/></Link>
+            <Link to='' onClick={(e) => { e.preventDefault(); this.props.history.goBack();}}><Icon type="arrow-left" className={styles.pre}/></Link>
             <span className={styles.title}>关于</span>
           </Header>
           <Content className={styles.content}>

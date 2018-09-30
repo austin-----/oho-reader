@@ -43,7 +43,7 @@ class ChangeOrigin extends React.Component{
       <Spin className='loading' spinning={this.state.loading} tip="书源加载中">
         <Layout >
           <Header className={styles.header}>
-            <Link to={`/read/${this.pos}`}><Icon type="arrow-left" className={styles.pre}/></Link>
+            <Link to='' onClick={(e) => { e.preventDefault(); this.props.history.goBack();}}><Icon type="arrow-left" className={styles.pre}/></Link>
             <span className={styles.title}>换源</span>
           </Header>
           <Content className={styles.content}>

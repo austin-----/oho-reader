@@ -10,7 +10,8 @@ const Main = (component) => {
       readSetting,
       bookList,
       readingState,
-      bookData
+      bookData,
+      chapterContent
     } = state
     return {
       searchResults,
@@ -19,7 +20,8 @@ const Main = (component) => {
       readSetting,
       bookList,
       readingState,
-      bookData
+      bookData,
+      chapterContent
     }
   }
 

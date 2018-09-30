@@ -1,4 +1,5 @@
 import 'regenerator-runtime/runtime';
+import { delay } from 'redux-saga'
 import { takeLatest, call, put, all } from 'redux-saga/effects';
 import * as bookApi from '../../method/bookApi';
 import * as actions from '../action/index';
@@ -6,6 +7,7 @@ import * as actions from '../action/index';
 export function* sagas() {
     yield takeLatest(actions.REFRESH_BOOK, refreshBook);
     yield takeLatest(actions.REFRESH_BOOKLIST, refreshBooks);
+    yield takeLatest(actions.NOTIFY_BOOK_READSCROLL, notifyBookReadScroll);
 }
 
 function* refreshBook(action) {
@@ -49,6 +51,15 @@ function* refreshBooks(action) {
         });
 
         yield all([...details, ...chapters]);
+    } catch (e) {
+        console.log(e);
+    }
+}
+
+function* notifyBookReadScroll(action) {
+    try {
+        yield call(delay, 5000);
+        yield put(actions.setBookReadScroll(action.bookId, action.readScroll));
     } catch (e) {
         console.log(e);
     }

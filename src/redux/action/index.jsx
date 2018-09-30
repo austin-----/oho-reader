@@ -14,11 +14,17 @@ export const SET_BOOKLIST = 'SET_BOOKLIST';
 
 export const SET_BOOK_SOURCE = 'SET_BOOK_SOURCE';
 export const SET_BOOK_PROGRESS = 'SET_BOOK_PROGRESS';
+export const NOTIFY_BOOK_READSCROLL = 'NOTIFY_BOOK_READSCROLL';
+export const SET_BOOK_READSCROLL = 'SET_BOOK_READSCROLL';
 export const REMOVE_BOOK_READING = 'REMOVE_BOOK_READING';
 
 export const SET_BOOK_DETAILS = 'SET_BOOK_DETAILS';
 export const SET_BOOK_CHAPTERS = 'SET_BOOK_CHAPTERS';
 export const REMOVE_BOOK_DATA = 'REMOVE_BOOK_DATA';
+
+export const CACHE_CHAPTER_CONTENT = 'CACHE_CHAPTER_CONTENT';
+export const REMOVE_CHAPTER_CONTENT = 'REMOVE_CHAPTER_CONTENT';
+export const CLEAR_CHAPTER_CONTENT = 'CLEAR_CHAPTER_CONTENT';
 
 export const REFRESH_BOOK = 'REFRESH_BOOK';
 export const REFRESH_BOOKLIST = 'REFRESH_BOOKLIST';
@@ -118,6 +124,24 @@ export const setBookProgress = (bookId, readIndex) => {
   }
 }
 
+// handled by saga and only the latest is used
+export const notifyBookReadScroll = (bookId, readScroll) => {
+  return {
+    type: NOTIFY_BOOK_READSCROLL,
+    bookId,
+    readScroll
+  }
+}
+
+// actually update the scrollTop
+export const setBookReadScroll = (bookId, readScroll) => {
+  return {
+    type: SET_BOOK_READSCROLL,
+    bookId,
+    readScroll
+  }
+}
+
 export const removeBookReading = (bookId) => {
   return {
     type: REMOVE_BOOK_READING,
@@ -177,6 +201,7 @@ export const deleteBook = (bookId) => {
     dispatch(removeFromBookList(bookId));
     dispatch(removeBookReading(bookId));
     dispatch(removeBookData(bookId));
+    dispatch(clearChapterContent(bookId));
   }
 }
 
@@ -207,6 +232,29 @@ export const refreshBooks = (list, readingState) => {
 export const refreshBook = (bookId) => {
   return {
     type: REFRESH_BOOK,
+    bookId
+  }
+}
+
+export const cacheChapterContent = (bookId, chapterContents) => {
+  return {
+    type: CACHE_CHAPTER_CONTENT,
+    bookId,
+    chapterContents
+  }
+}
+
+export const removeChapterContent = (bookId, chapterIds) => {
+  return {
+    type: REMOVE_CHAPTER_CONTENT,
+    bookId,
+    chapterIds
+  }
+}
+
+export const clearChapterContent = (bookId) => {
+  return {
+    type: CLEAR_CHAPTER_CONTENT,
     bookId
   }
 }

@@ -78,7 +78,7 @@ class Search extends React.Component{
       <div className="page" ref="search">
         <Layout >
           <Header className={styles.header}>
-            <Link to="/"><Icon type="arrow-left" className={styles.pre}/></Link>
+            <Link to='' onClick={(e) => { e.preventDefault(); this.props.history.goBack();}}><Icon type="arrow-left" className={styles.pre}/></Link>
             <Input
               ref="search"
               placeholder="请输入搜索的书名"

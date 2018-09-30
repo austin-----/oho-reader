@@ -6,6 +6,7 @@ import styles from '../styles/bookIntroduce.less';
 import randomcolor from 'randomcolor';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
+var _ = require('underscore');
 
 const { Header, Content } = Layout
 
@@ -24,8 +25,16 @@ class BookIntroduce extends React.Component{
       duration: 2
     });
 
+    this.bookId = this.props.match.params.id;
     this.flag = false; //是否进入阅读模式
-    this.props.retrieveBookDetails(this.props.match.params.id);
+
+    if (_.has(this.props.bookData, this.bookId) && _.has(this.props.bookData[this.bookId], 'details'))
+    {
+      this.props.cacheBookDetails(this.props.bookData[this.bookId].details);
+    } else {
+      this.props.retrieveBookDetails(this.bookId);
+    }
+
     this.addBook = () => {
       this.props.addBook(this.data);
       message.info(`《${this.data.title}》加入书架`);
@@ -74,7 +83,7 @@ class BookIntroduce extends React.Component{
       <div>
         <Layout >
           <Header className={styles.header}>
-            <Link to="/search"><Icon type="arrow-left" className={styles.pre}/></Link>
+            <Link to='' onClick={(e) => { e.preventDefault(); this.props.history.goBack();}}><Icon type="arrow-left" className={styles.pre}/></Link>
             <span className={styles.title}>书籍详情</span>
             <CopyToClipboard text={this.share}
               onCopy = {this.shareSuccess}>

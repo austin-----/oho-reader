@@ -32,7 +32,6 @@ class Read extends React.Component {
       loading: true,
       chapter: '',
       show: false,
-      index: this.index,
       readSetting: this.readSetting,
       chapterListShow: false,
       readSettingShow: false
@@ -52,7 +51,14 @@ class Read extends React.Component {
 
       this.setState({ loading: true });
 
-      //TODO: get chapter from cache
+      if (_.has(this.props.chapterContent, this.bookId) && _.has(this.props.chapterContent[this.bookId], index))
+      {
+          return Promise.resolve()
+          .then( () => {
+            this.props.setBookProgress(this.bookId, index);
+            this.setState({ loading: false, chapter: this.props.chapterContent[this.bookId][index] });
+          });
+      }
 
       if (this.chapterList[index] == null) {
         message.info('章节内容丢失！');
@@ -120,9 +126,7 @@ class Read extends React.Component {
     }
 
     this.readScroll = () => {
-      //let bookList = this.props.bookList[this.pos];
-      //bookList[this.pos].readScroll = this.refs.box.scrollTop;
-      // TODO: update readScroll
+      this.props.notifyBookReadScroll(this.bookId, this.refs.box.scrollTop);
     }
 
     this.showChapterList = (chapterListShow) => {
@@ -130,7 +134,8 @@ class Read extends React.Component {
     }
 
     this.downladBook = () => {
-      let pos = this.pos;
+      let self = this;
+
       Modal.confirm({
         title: '缓存',
         content: (
@@ -139,37 +144,38 @@ class Read extends React.Component {
           </div>
         ),
         onOk() {
-          // TODO: add chapter cache to redux
-          let bookList = this.props.bookList[this.pos];
-          let chapters = bookList[pos].list.chapters;
+          let chapterContent = self.props.chapterContent[self.bookId] || {};
+
           let download = (start, end) => {
-            if (start > end || start >= chapters.length) {
+            if (start > end || start >= self.chapterList.length) {
               message.info('缓存完成');
               return;
             }
 
-            if (_.has(chapters[start], 'chapter')) {
+            if (_.has(chapterContent, start)) {
               download(++start, end);
               return;
             }
 
-            bookApi.getBookChapterContent(chapters[start].link)
+            bookApi.getBookChapterContent(self.chapterList[start].link)
               .then(data => {
                 let content = _.has(data.chapter, 'cpContent') ? data.chapter.cpContent : data.chapter.body;
                 data.chapter.cpContent = '   ' + content.replace(/\n/g, '\n   ');
-                chapters[start].chapter = data.chapter;
-                bookList[pos].list.chapters = chapters;
-                // TODO: update chapters? or not
+
+                if (self.chapterList[start].title.length > data.chapter.title.length) {
+                  data.chapter.title = self.chapterList[start].title;
+                }
+
+                self.props.cacheChapterContent(self.bookId, { [start]: data.chapter });
                 download(++start, end);
               })
               .catch(error => message.info(error))
           }
 
-          for (let i = 0; i < bookList[pos].readIndex; i++) {
-            delete chapters[i].chapter;
-          }
+          const cacheStart = self.index - 10 > 1 ? self.index - 10 : 1;
+          self.props.removeChapterContent(self.bookId, Array.from({ length: cacheStart - 1 }, (_, k) => k));
 
-          download(bookList[pos].readIndex, bookList[pos].readIndex + 100);
+          download(self.index, self.index + 100);
         },
         onCancel() { }
       });
@@ -205,9 +211,12 @@ class Read extends React.Component {
     }
 
     // 刷新最近阅读的书籍列表顺序
-    // let bookList = this.props.bookList[this.pos];
-    // bookList.unshift(bookList.splice(this.pos, 1)[0]);
-    // TODO: update bookList
+    var set = new Set(this.props.bookList);
+    set.delete(this.bookId);
+    this.props.setBookList([
+      this.bookId, 
+      ...Array.from(set)
+    ]);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -223,7 +232,7 @@ class Read extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    if (!this.bookNeedsRefresh && this.needSetScrollTop) { //加载上次阅读进度
+    if (!this.bookNeedsRefresh && this.needSetScrollTop && prevState.chapter != this.state.chapter) { //加载上次阅读进度
       let readingState = this.props.readingState[this.bookId];
       this.refs.box.scrollTop = _.has(readingState, 'readScroll') ? readingState.readScroll : 0;
       this.needSetScrollTop = false;
@@ -236,7 +245,6 @@ class Read extends React.Component {
       list.scrollTop = 45 * (this.index - 3);
     }
   }
-
 
   render() {
     return (
@@ -257,7 +265,7 @@ class Read extends React.Component {
             this.state.show ? (() => {
               return (
                 <Header className={styles.header}>
-                  <Link to='/'><Icon type='arrow-left' className={styles.pre} /></Link>
+                  <Link to='' onClick={(e) => { e.preventDefault(); this.props.history.goBack();}}><Icon type='arrow-left' className={styles.pre} /></Link>
                   <Link to={`/changeOrigin/${this.pos}`}><span className={styles.origin}>换源</span></Link>
                 </Header>
               )
@@ -304,7 +312,8 @@ class Read extends React.Component {
                         ) : ''
                     }
                   </div>
-                  <div><Icon type='download' onClick={this.downladBook} /><br />下载</div>
+                  <div onClick={() => this.props.history.push({pathname: '/bookIntroduce/' + this.bookId }) }><Icon type='message' /><br />简介</div>
+                  <div onClick={this.downladBook} ><Icon type='download' /><br />下载</div>
                   <div onClick={() => this.showChapterList(true)}><Icon type='bars' /><br />目录</div>
                 </Footer>
               )
