@@ -23,19 +23,20 @@ var StoreJS = function() {
             xhr.onload = () => {
                 if (xhr.status == 200)
                 {
-                    //if (self.disconnected && self.connectCallback != null) {
-                    //    self.connectCallback(key, xhr.responseText);
-                    //}
-                    self.disconnected = false;
-                    resolve(xhr.responseText);
+                    if (self.disconnected && self.connectCallback != null) {
+                        self.connectCallback(key, xhr.responseText);
+                    } else {
+                        self.disconnected = false;
+                        resolve(xhr.responseText);
+                    }
                 } else {
                     self.disconnected = true;
-                    //window.setTimeout(self.getRemote, 5000, key, self);
+                    window.setTimeout(self.getRemote, 5000, key, self);
                 }
             };
             xhr.onerror = () => {
                 self.disconnected = true;
-                //window.setTimeout(self.getRemote, 5000, key, self);
+                window.setTimeout(self.getRemote, 5000, key, self);
             }
             xhr.send(null);
         });

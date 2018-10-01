@@ -55,11 +55,8 @@ sagaMiddleware.run(sagas);
 
 const persistor = persistStore(store)
 
-StoreJs.connectCallback = (key, state) => { persistor.dispatch ({
-  type: REHYDRATE,
-  payload: state,
-  err: null,
-  key
-}) }
+StoreJs.connectCallback = (key, state) => { 
+  document.location.reload();
+}
 
 export {store, persistor};
