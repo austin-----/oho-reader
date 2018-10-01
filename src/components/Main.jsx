@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom'
 import BookItem from './bookItem'
 import styles from '../styles/main.less'
 import template from './template'
-import 'whatwg-fetch'
 
 let menuPng = require('../images/menu.png');
 

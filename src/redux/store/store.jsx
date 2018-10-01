@@ -1,7 +1,7 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import * as reducer from '../reducer/index';
 import thunk from 'redux-thunk';
-import { persistStore, persistReducer } from 'redux-persist'
+import { persistStore, persistReducer, REHYDRATE } from 'redux-persist'
 import StoreJs from '../../method/storejs';
 import storage from 'redux-persist/lib/storage';
 import createSagaMiddleware from 'redux-saga';
@@ -36,7 +36,7 @@ const persistConfigLocal = {
 const { chapterContent, ...otherReducers } = reducer;
 
 const persistedReducer = persistReducer(
-  persistConfig, 
+  persistConfig,
   combineReducers({
     ...otherReducers,
     chapterContent: persistReducer(persistConfigLocal, chapterContent)
@@ -54,5 +54,12 @@ const  store = createStore(
 sagaMiddleware.run(sagas);
 
 const persistor = persistStore(store)
+
+StoreJs.connectCallback = (key, state) => { persistor.dispatch ({
+  type: REHYDRATE,
+  payload: state,
+  err: null,
+  key
+}) }
 
 export {store, persistor};

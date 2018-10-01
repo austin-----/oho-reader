@@ -3,7 +3,6 @@ import {Layout, Icon, Spin, Tag} from 'antd';
 import { Link } from 'react-router-dom';
 import styles from '../styles/changeOrigin.less';
 import template from './template';
-import 'whatwg-fetch';
 import {time2Str} from '../method/index';
 import * as bookApi from '../method/bookApi';
 

@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom'
 import { Layout, Spin, message, Icon, Modal } from 'antd';
 import styles from '../styles/read.less';
 import template from './template';
-import 'whatwg-fetch';
 import * as bookApi from '../method/bookApi';
 
 const { Header, Footer } = Layout;
