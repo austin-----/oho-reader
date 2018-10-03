@@ -16,6 +16,30 @@ var StoreJS = function() {
         return Promise.resolve();
     }
 
+    this.tryReconnect = function(key, self) {
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', self.base + encodeURIComponent(key), true);  // asynchronous request
+        xhr.onload = () => {
+            if (xhr.status == 200)
+            {
+                if (self.disconnected && self.connectCallback != null) {
+                    self.connectCallback(key, xhr.responseText);
+                } else {
+                    self.disconnected = false;
+                    resolve(xhr.responseText);
+                }
+            } else {
+                self.disconnected = true;
+                window.setTimeout(self.tryReconnect, 5000, key, self);
+            }
+        };
+        xhr.onerror = () => {
+            self.disconnected = true;
+            window.setTimeout(self.tryReconnect, 5000, key, self);
+        }
+        xhr.send(null);
+    }
+
     this.getRemote = function(key, self) {
         return new Promise((resolve, reject) => {
             var xhr = new XMLHttpRequest();
@@ -23,20 +47,18 @@ var StoreJS = function() {
             xhr.onload = () => {
                 if (xhr.status == 200)
                 {
-                    if (self.disconnected && self.connectCallback != null) {
-                        self.connectCallback(key, xhr.responseText);
-                    } else {
-                        self.disconnected = false;
-                        resolve(xhr.responseText);
-                    }
+                    self.disconnected = false;
+                    resolve(xhr.responseText);
                 } else {
                     self.disconnected = true;
-                    window.setTimeout(self.getRemote, 5000, key, self);
+                    window.setTimeout(self.tryReconnect, 5000, key, self);
+                    reject();
                 }
             };
             xhr.onerror = () => {
                 self.disconnected = true;
-                window.setTimeout(self.getRemote, 5000, key, self);
+                window.setTimeout(self.tryReconnect, 5000, key, self);
+                reject();
             }
             xhr.send(null);
         });

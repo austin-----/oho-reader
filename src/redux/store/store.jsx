@@ -1,7 +1,7 @@
 import {createStore, combineReducers, applyMiddleware} from 'redux';
 import * as reducer from '../reducer/index';
 import thunk from 'redux-thunk';
-import { persistStore, persistReducer, REHYDRATE } from 'redux-persist'
+import { persistStore, persistReducer } from 'redux-persist'
 import StoreJs from '../../method/storejs';
 import storage from 'redux-persist/lib/storage';
 import createSagaMiddleware from 'redux-saga';
